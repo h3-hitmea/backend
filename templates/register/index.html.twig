@@ -3,5 +3,66 @@
 {% block title %}Hello RegisterController!{% endblock %}
 
 {% block body %}
+ <h1>Inscription</h1>
 
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <div id="webcam-container">
+        <video id="webcam-preview" width="320" height="240"></video>
+        <button id="webcam-capture-button">Prendre une photo</button>
+    </div>
+
+    <input type="hidden" id="webcam-photo-input" name="register_form[photo]">
+
+    <button type="submit">S'inscrire</button>
+    {{ form_end(form) }}
+
+    <script>
+   const webcamContainer = document.getElementById('webcam-container');
+   const webcamPreview = document.getElementById('webcam-preview');
+   const webcamCaptureButton = document.getElementById('webcam-capture-button');
+   const webcamPhotoInput = document.getElementById('webcam-photo-input');
+
+   // Accéder à la webcam et afficher le flux vidéo dans la balise <video>
+   navigator.mediaDevices.getUserMedia({ video: true })
+       .then(stream => {
+           webcamPreview.srcObject = stream;
+       })
+       .catch(error => {
+           console.error('Erreur lors de l\'accès à la webcam:', error);
+       });
+
+   let mediaStreamTrack;
+   let imageCapture;
+
+   webcamPreview.addEventListener('loadedmetadata', () => {
+       mediaStreamTrack = webcamPreview.srcObject.getVideoTracks()[0];
+       imageCapture = new ImageCapture(mediaStreamTrack);
+   });
+
+   webcamCaptureButton.addEventListener('click', () => {
+       imageCapture.grabFrame()
+           .then(imageBitmap => {
+               const canvas = document.createElement('canvas');
+               canvas.width = imageBitmap.width;
+               canvas.height = imageBitmap.height;
+               canvas.getContext('2d').drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+
+               canvas.toBlob(blob => {
+                   const file = new File([blob], 'photo.png', { type: 'image/png' });
+                   const fileReader = new FileReader();
+
+                   fileReader.onloadend = () => {
+                       webcamPhotoInput.value = fileReader.result;
+                   };
+
+                   fileReader.readAsDataURL(file);
+               }, 'image/png');
+           })
+           .catch(error => {
+               console.error('Erreur lors de la capture de l\'image:', error);
+           });
+   });
+</script>
 {% endblock %}

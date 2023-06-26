@@ -6,3 +6,6 @@ controllers:
 home:
     path: /
     controller: App\Controller\HomeController::index
+register:
+    path: /register
+    controller: App\Controller\RegisterController::showForm

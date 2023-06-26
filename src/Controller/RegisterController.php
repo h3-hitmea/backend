@@ -3,16 +3,18 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Form\RegisterType;
 
 class RegisterController extends AbstractController
 {
-    #[Route('/register', name: 'app_register')]
-    public function index(): Response
+    public function showForm(Request $request): Response
     {
+        $registerForm = $this->createForm(RegisterType::class);
+
         return $this->render('register/index.html.twig', [
-            'controller_name' => 'RegisterController',
+            'form' => $registerForm->createView(),
         ]);
     }
 }
