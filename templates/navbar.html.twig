@@ -1,0 +1,56 @@
+<head>
+<style>
+    .navbar-wrapper {
+      transition: transform 0.4s ease-in-out;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+    }
+  </style>
+</head>
+
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-white">
+    <a class="navbar-brand" href="{{ path('home') }}" style="padding-left: 20px; padding-right: 20px;">
+    <img src="{{ asset('images/MaxAirain2.png') }}" width="150px" alt="">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Espace Utilisateur
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Identification</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Inscription</a>
+        </div>
+      </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+<script>
+    var prevScrollpos = window.pageYOffset;
+    var navbarWrapper = document.querySelector('.navbar-wrapper');
+
+    window.onscroll = function() {
+      var currentScrollPos = window.pageYOffset;
+      if (prevScrollpos > currentScrollPos) {
+        // Scroll vers le haut
+        navbarWrapper.style.transform = 'translateY(0)';
+      } else {
+        // Scroll vers le bas
+        navbarWrapper.style.transform = 'translateY(-48px)';
+      }
+      prevScrollpos = currentScrollPos;
+    }
+
+
+  </script>
