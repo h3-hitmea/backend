@@ -13,6 +13,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class RegistrationController extends AbstractController
 {
@@ -39,60 +40,65 @@ class RegistrationController extends AbstractController
     public function register(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
 
-        $form->submit($data);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Gérez le fichier de photo ici
-            $uploadedFile = $form['photo']->getData();
+        $user->setPrenom($data['prenom']);
+        $user->setNom($data['nom']);
+        $file = $request->files->get('photo');
+
+
+            // if ($file instanceof UploadedFile) {
+            //     // Process the uploaded file (e.g., move it to a specific directory)
+            //     $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+            //     $file->move(
+            //         $this->getParameter('upload_directory'),
+            //         $fileName
+            //     );
+    
+            //     // Store the file name in the user object or associate it with the user as needed
+            //     // ...
+            // }
 
             // Vérifiez si un fichier a été téléchargé
-            if ($uploadedFile) {
-                $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $this->slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'.'.$uploadedFile->guessExtension();
+            // if ($uploadedFile) {
+            //     $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+            //     $safeFilename = $this->slugger->slug($originalFilename);
+            //     $newFilename = $safeFilename.'.'.$uploadedFile->guessExtension();
 
-                // Renommez le fichier avec le nom de la personne
-                $newFilename = $user->getNom().'_'.$user->getPrenom().'.'.$uploadedFile->guessExtension();
+            //     // Renommez le fichier avec le nom de la personne
+            //     $newFilename = $user->getNom().'_'.$user->getPrenom().'.'.$uploadedFile->guessExtension();
 
-                // Déplacez le fichier vers le répertoire d'upload
-                try {
-                    $uploadedFile->move(
-                        $this->getParameter('upload_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // Gérer l'erreur si la sauvegarde du fichier échoue
-                    return $this->json(['error' => 'Failed to upload file.'], Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+            //     // Déplacez le fichier vers le répertoire d'upload
+            //     try {
+            //         $uploadedFile->move(
+            //             $this->getParameter('upload_directory'),
+            //             $newFilename
+            //         );
+            //     } catch (FileException $e) {
+            //         // Gérer l'erreur si la sauvegarde du fichier échoue
+            //         return $this->json(['error' => 'Failed to upload file.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            //     }
 
-                // Mettez à jour le nom de fichier dans l'entité User
-                $user->setPhoto($newFilename);
-            }
+            //     // Mettez à jour le nom de fichier dans l'entité User
+            //     $user->setPhoto($newFilename);
+            // }
 
             // Validez l'entité User
-            $errors = $this->validator->validate($user);
-            if (count($errors) > 0) {
-                $errorMessages = [];
-                foreach ($errors as $error) {
-                    $errorMessages[] = $error->getMessage();
-                }
-                return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
-            }
+            // $errors = $this->validator->validate($user);
+            // if (count($errors) > 0) {
+            //     $errorMessages = [];
+            //     foreach ($errors as $error) {
+            //         $errorMessages[] = $error->getMessage();
+            //     }
+            //     return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
+            // }
+
 
             // Enregistrez l'utilisateur en base de données
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
             return $this->json(['message' => 'User registered successfully.'], Response::HTTP_CREATED);
-        }
-
-        // Form is not valid
-        $errors = $this->getFormErrors($form);
-
-        return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
     }
 
     /**
