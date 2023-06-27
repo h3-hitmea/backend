@@ -8,7 +8,16 @@ home:
     controller: App\Controller\HomeController::index
 register:
     path: /register
-    controller: App\Controller\RegistrationController::index
+    controller: App\Controller\RegistrationController::register
 registration_success:
     path: /register/success
-    controller: 'App\Controller\RegistrationController::registrationSuccess'
+    controller: App\Controller\RegistrationController::registrationSuccess
+api_registration:
+    path: /api/register
+    controller: App\Controller\RegistrationController::index
+    methods: [POST]
+
+api_registration_success:
+    path: /api/register/success
+    controller: App\Controller\Api\RegistrationApiController::registrationSuccess
+    methods: [GET]
