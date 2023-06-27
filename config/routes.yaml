@@ -6,3 +6,9 @@ controllers:
 home:
     path: /
     controller: App\Controller\HomeController::index
+register:
+    path: /register
+    controller: App\Controller\RegistrationController::index
+registration_success:
+    path: /register/success
+    controller: 'App\Controller\RegistrationController::registrationSuccess'
